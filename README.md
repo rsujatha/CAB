@@ -1,4 +1,5 @@
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/rsujatha/CAB/master?filepath=https%3A%2F%2Fgithub.com%2Frsujatha%2FCAB%2Ftree%2Fmaster%2Fdemo_jupyternb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/rsujatha/CAB/9673c962ca3131b5524b52196c74dfa1189fc41d?filepath=demo_jupyternb%2Fdemo.ipynb)
+
 
 ## Description
 
