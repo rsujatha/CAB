@@ -1,5 +1,51 @@
 import numpy as np
 
+class cosmology(object):
+	def __init__(self,Omega_matter = 0.3,Omega_lambda = 0.7):
+		self.Omega_matter=Omega_matter
+		self.Omega_lambda=Omega_lambda
+	
+	def T10(self,argument,k,Tfn,z=0,mass_flag=1):
+		"""
+		Input:
+		argument can either be \nu or mass in Mpc/h
+		k in h Mpc^1
+		T the tranfer function
+		z is the redshift
+		mass_flag 1 takes mass as input 0 takes peak height as input
+		
+		Output:
+		returns Tinker2010 bias
+		"""	
+		delta_c = 1.686
+	
+		if mass_flag ==1:
+			R = (3/(4.*np.pi)*argument/(self.rho_c_h2_msun_mpc3*self.Omega_matter))**(1/3.)
+			PS = cosmology.PS(self,k,z,Tfn)
+			Delk = 1/(2.*np.pi**2)*PS*k**3.
+			sigma_square = np.zeros([len(R),1])
+			for i in range(0,len(R)):
+				wk = cosmology.Wk(self,k,R[i])
+				sigma_square[i] = np.trapz(Delk*wk**2/k,k)
+			v = delta_c/np.sqrt(sigma_square)
+		else:
+			v = argument
+		delta = 200
+		y = np.log10(delta)
+		A = 1. + 0.24 * y * np.exp(-(4/y)**4)
+		a = 0.44 * y - 0.88
+		B = 0.183
+		b = 1.5
+		C = 0.019 + 0.107 * y + 0.19 * np.exp(-(4/y)**4)
+		c = 2.4
+		bias = 1- A*v**a/(v**a+delta_c**a)+B*v**b+C*v**c
+		return bias.flatten()
+
+
+
+
+
+
 class cab(object):
 	def __init__(self):
 
