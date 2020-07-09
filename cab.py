@@ -1,9 +1,27 @@
 import numpy as np
 
 class cosmology(object):
-	def __init__(self,Omega_matter = 0.3,Omega_lambda = 0.7):
+	def __init__(self,Omega_matter = 0.3):
 		self.Omega_matter=Omega_matter
-		self.Omega_lambda=Omega_lambda
+		self.rho_c_h2_msun_mpc3 = 2776*1e8    ## critical density in (msun/h)(mpc/h)**3
+
+	def PS(self,k,z,T):
+		"""
+		Input
+		k in h Mpc^1
+		z redshift
+		T the tranfer function
+		
+		Outputs 
+		Pk the power spectrum
+		"""
+		R=8.
+		integrand = 1/(2*np.pi**2)*k**(self.ns+2.)*T**2*cosmology.Wk(self,k,R)**2
+		igrate = np.trapz(integrand,k)
+		SigmaSquare=self.sigma_8**2
+		NormConst = SigmaSquare/igrate
+		return NormConst*k**self.ns*(T)**2*cosmology.GrowthFunctionAnalytic(self,1./(1.+z))**2/cosmology.GrowthFunctionAnalytic(self,1)**2
+
 	
 	def T10(self,argument,k,Tfn,z=0,mass_flag=1):
 		"""
@@ -18,7 +36,6 @@ class cosmology(object):
 		returns Tinker2010 bias
 		"""	
 		delta_c = 1.686
-	
 		if mass_flag ==1:
 			R = (3/(4.*np.pi)*argument/(self.rho_c_h2_msun_mpc3*self.Omega_matter))**(1/3.)
 			PS = cosmology.PS(self,k,z,Tfn)
@@ -46,41 +63,41 @@ class cosmology(object):
 
 
 
-class cab(object):
-	def __init__(self):
+# ~ class cab(object):
+	# ~ def __init__(self):
 
 
-	def b1avg(self,m,z,k,Tfn,pm1,ps1,fromval,toval,mass_flag=1):
-		"""
-		mass_flag = 0->peakheight
-				  = 1->mass 
-		m = peakheight is mass_flag=0 or mass in h^-1Msun if mass_flag=1
-		z = redshift
-		k = k
-		"""
-		if fromval==None:
-			if toval==None:
-				h1avg = 0
-				h2avg = 0
-			else:
-				h1avg = separate_universe.H1(self,toval)
-				h2avg = separate_universe.H2(self,toval)
-			_avg = 1
-		elif np.exp(-toval**2/2)==0.0:
-			h1avg = (np.exp(-fromval**2/2)-np.exp(-toval**2/2))/np.sqrt(2*np.pi)
-			h2avg = (fromval*np.exp(-fromval**2/2))/np.sqrt(2*np.pi)
-			_avg = (special.erf(toval/np.sqrt(2))-special.erf(fromval/np.sqrt(2)))/2
-		elif np.exp(-fromval**2/2)==0.0:
-			h1avg = (np.exp(-fromval**2/2)-np.exp(-toval**2/2))/np.sqrt(2*np.pi)
-			h2avg = (-toval*np.exp(-toval**2/2))/np.sqrt(2*np.pi)
-			_avg = (special.erf(toval/np.sqrt(2))-special.erf(fromval/np.sqrt(2)))/2
-		else:
-			h1avg = (np.exp(-fromval**2/2)-np.exp(-toval**2/2))/np.sqrt(2*np.pi)
-			h2avg = (fromval*np.exp(-fromval**2/2)-toval*np.exp(-toval**2/2))/np.sqrt(2*np.pi)
-			_avg = (special.erf(toval/np.sqrt(2))-special.erf(fromval/np.sqrt(2)))/2
-		if mass_flag ==1:
-			v = separate_universe.PeakHeight(self,m,k,Tfn,z)
-			b1avg = separate_universe.T10(self,m,k=k,Tfn=Tfn,z=z,mass_flag=1) + separate_universe.mu1_c200b(self,v,pm1)*h1avg/_avg + 1/2.*separate_universe.Sigma1_c200b(self,v,ps1)*h2avg/_avg
-		elif mass_flag==0:
-			b1avg = separate_universe.T10(self,m,k=k,Tfn=Tfn,z=z,mass_flag=0) + separate_universe.mu1_c200b(self,m,pm1)*h1avg/_avg + 1/2.*separate_universe.Sigma1_c200b(self,m,ps1)*h2avg/_avg
-		return b1avg
+	# ~ def b1avg(self,m,z,k,Tfn,pm1,ps1,fromval,toval,mass_flag=1):
+		# ~ """
+		# ~ mass_flag = 0->peakheight
+				  # ~ = 1->mass 
+		# ~ m = peakheight is mass_flag=0 or mass in h^-1Msun if mass_flag=1
+		# ~ z = redshift
+		# ~ k = k
+		# ~ """
+		# ~ if fromval==None:
+			# ~ if toval==None:
+				# ~ h1avg = 0
+				# ~ h2avg = 0
+			# ~ else:
+				# ~ h1avg = separate_universe.H1(self,toval)
+				# ~ h2avg = separate_universe.H2(self,toval)
+			# ~ _avg = 1
+		# ~ elif np.exp(-toval**2/2)==0.0:
+			# ~ h1avg = (np.exp(-fromval**2/2)-np.exp(-toval**2/2))/np.sqrt(2*np.pi)
+			# ~ h2avg = (fromval*np.exp(-fromval**2/2))/np.sqrt(2*np.pi)
+			# ~ _avg = (special.erf(toval/np.sqrt(2))-special.erf(fromval/np.sqrt(2)))/2
+		# ~ elif np.exp(-fromval**2/2)==0.0:
+			# ~ h1avg = (np.exp(-fromval**2/2)-np.exp(-toval**2/2))/np.sqrt(2*np.pi)
+			# ~ h2avg = (-toval*np.exp(-toval**2/2))/np.sqrt(2*np.pi)
+			# ~ _avg = (special.erf(toval/np.sqrt(2))-special.erf(fromval/np.sqrt(2)))/2
+		# ~ else:
+			# ~ h1avg = (np.exp(-fromval**2/2)-np.exp(-toval**2/2))/np.sqrt(2*np.pi)
+			# ~ h2avg = (fromval*np.exp(-fromval**2/2)-toval*np.exp(-toval**2/2))/np.sqrt(2*np.pi)
+			# ~ _avg = (special.erf(toval/np.sqrt(2))-special.erf(fromval/np.sqrt(2)))/2
+		# ~ if mass_flag ==1:
+			# ~ v = separate_universe.PeakHeight(self,m,k,Tfn,z)
+			# ~ b1avg = separate_universe.T10(self,m,k=k,Tfn=Tfn,z=z,mass_flag=1) + separate_universe.mu1_c200b(self,v,pm1)*h1avg/_avg + 1/2.*separate_universe.Sigma1_c200b(self,v,ps1)*h2avg/_avg
+		# ~ elif mass_flag==0:
+			# ~ b1avg = separate_universe.T10(self,m,k=k,Tfn=Tfn,z=z,mass_flag=0) + separate_universe.mu1_c200b(self,m,pm1)*h1avg/_avg + 1/2.*separate_universe.Sigma1_c200b(self,m,ps1)*h2avg/_avg
+		# ~ return b1avg
