@@ -1,10 +1,33 @@
 import numpy as np
+import scipy.special as sp
 
 class cosmology(object):
-	def __init__(self,Omega_matter = 0.3):
+	def __init__(self,Omega_matter = 0.276,Omega_lambda=0.724,H_0=70.,ns=0.96,sigma_8 = 0.8 ):
 		self.Omega_matter=Omega_matter
 		self.rho_c_h2_msun_mpc3 = 2776*1e8    ## critical density in (msun/h)(mpc/h)**3
+		self.ns = ns
+		self.Omega_lambda = Omega_lambda
+		self.sigma_8 = sigma_8
+		self.H_0=H_0
+		self.delta_c=1.686
 
+
+	def Wk(self,k,R):
+		"""
+		Fourier Transform of a Spherical Top Hat Filter
+		"""
+		return 3/(k*R)**3*(np.sin(k*R)-(k*R)*np.cos(k*R))	
+
+	def GrowthFunction(self,a):
+		"""
+		a is the scale factor
+		"""
+		a=np.array(a)+1e-15
+		D=np.ones(np.size(a))
+		H=self.H_0*(self.Omega_matter*(a**(-3))+self.Omega_lambda)**(1/2.)
+		D=(H/self.H_0)*a**(5/2.)/np.sqrt(self.Omega_matter)*sp.hyp2f1(5/6.,3/2.,11/6.,-a**3*self.Omega_lambda/self.Omega_matter)
+		return D
+			
 	def PS(self,k,z,T):
 		"""
 		Input
@@ -20,8 +43,24 @@ class cosmology(object):
 		igrate = np.trapz(integrand,k)
 		SigmaSquare=self.sigma_8**2
 		NormConst = SigmaSquare/igrate
-		return NormConst*k**self.ns*(T)**2*cosmology.GrowthFunctionAnalytic(self,1./(1.+z))**2/cosmology.GrowthFunctionAnalytic(self,1)**2
+		return NormConst*k**self.ns*(T)**2*cosmology.GrowthFunction(self,1./(1.+z))**2/cosmology.GrowthFunction(self,1)**2
 
+	def PeakHeight(self,mass,k,Tfn,z):
+		"""
+		Inputs:
+		mass in Msunh-1
+		k in h Mpc^1
+		z redshift
+		T the tranfer function
+		"""
+		R = (3/(4*np.pi)*mass/(self.rho_c_h2_msun_mpc3*self.Omega_matter))**(1/3.) ## is in units of Mpch-1
+		PS = cosmology.PS(self,k,z,Tfn)
+		sigma_square = np.zeros([len(R),1])
+		for i in range(0,len(R)):
+			wk = cosmology.Wk(self,k,R[i])
+			sigma_square[i] = 1/(2.*np.pi**2)*np.trapz(PS*wk**2*k**2,k)
+		nu = self.delta_c/np.sqrt(sigma_square)
+		return nu.flatten()
 	
 	def T10(self,argument,k,Tfn,z=0,mass_flag=1):
 		"""
