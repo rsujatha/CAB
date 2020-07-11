@@ -7,7 +7,7 @@ dependencies:
   - toolz
   - matplotlib
   - dill
-  - pandas
+  - scipy
   - partd
   - bokeh
   - dask
