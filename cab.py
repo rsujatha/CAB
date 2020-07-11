@@ -58,8 +58,8 @@ class cosmology(object):
 		PS = cosmology.PS(self,k,z,Tfn)
 		sigma_square = np.zeros([len(R),1])
 		for i in range(0,len(R)):
-			wk = cosmology.Wk(self,k,R[i])
-			sigma_square[i] = 1/(2.*np.pi**2)*np.trapz(PS*wk**2*k**2,k)
+			wk = cosmology.Wk(self,self.kbyh,R[i])
+			sigma_square[i] = 1/(2.*np.pi**2)*np.trapz(PS*wk**2*self.kbyh**2,self.kbyh)
 		nu = self.delta_c/np.sqrt(sigma_square)
 		return nu.flatten()
 	
