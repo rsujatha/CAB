@@ -2,7 +2,7 @@ import numpy as np
 import scipy.special as sp
 
 class cosmology(object):
-	def __init__(self,Omega_matter = 0.276,Omega_lambda=0.724,H_0=70.,ns=0.96,sigma_8 = 0.8 ):
+	def __init__(self,Omega_matter = 0.276,Omega_lambda=0.724,H_0=70.,ns=0.96,sigma_8 = 0.8,kbyh=None,Tfn=None ):
 		self.Omega_matter=Omega_matter
 		self.rho_c_h2_msun_mpc3 = 2776*1e8    ## critical density in (msun/h)(mpc/h)**3
 		self.ns = ns
@@ -10,7 +10,8 @@ class cosmology(object):
 		self.sigma_8 = sigma_8
 		self.H_0=H_0
 		self.delta_c=1.686
-
+		self.kbyh = kbyh
+		self.Tfn = Tfn
 
 	def Wk(self,k,R):
 		"""
@@ -97,17 +98,33 @@ class cosmology(object):
 		bias = 1- A*v**a/(v**a+delta_c**a)+B*v**b+C*v**c
 		return bias.flatten()
 
-	def b1avg(self,m,z,k,Tfn,pm1,ps1,fromval,toval,mass_flag=1):
+	def H1(self,s):
+		return s
+		
+	def H2(self,s):
+		return s**2 -1
+		
+	def H3(self,s):
+		return s**3-3*s
+		
+	def H4(self,s):
+		return s**4-6*s**2+3
+
+	def b1avg(self,m,z,k,Tfn,fromval,toval,pm1,ps1,mass_flag=1):
 		"""
+		mass_flag = 0->peakheight
+				  = 1->mass 
+		m = peakheight is mass_flag=0 or mass in h^-1Msun if mass_flag=1
+		z = redshift
 		requires mass input in h^-1 Msun
 		"""
-		if fromval==None:
-			if toval==None:
+		if toval==None:
+			if fromval==None:
 				h1avg = 0
 				h2avg = 0
 			else:
-				h1avg = separate_universe.H1(self,toval)
-				h2avg = separate_universe.H2(self,toval)
+				h1avg = separate_universe.H1(self,fromval)
+				h2avg = separate_universe.H2(self,fromval)
 			_avg = 1
 		elif np.exp(-toval**2/2)==0.0:
 			h1avg = (np.exp(-fromval**2/2)-np.exp(-toval**2/2))/np.sqrt(2*np.pi)
