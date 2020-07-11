@@ -2,7 +2,7 @@ import numpy as np
 import scipy.special as sp
 
 class cosmology(object):
-	def __init__(self,Omega_matter = 0.276,Omega_lambda=0.724,H_0=70.,ns=0.96,sigma_8 = 0.8 ):
+	def __init__(self,Omega_matter = 0.276,Omega_lambda=0.724,H_0=70.,ns=0.96,sigma_8 = 0.8,kbyh=None,Tfn=None ):
 		self.Omega_matter=Omega_matter
 		self.rho_c_h2_msun_mpc3 = 2776*1e8    ## critical density in (msun/h)(mpc/h)**3
 		self.ns = ns
@@ -10,7 +10,8 @@ class cosmology(object):
 		self.sigma_8 = sigma_8
 		self.H_0=H_0
 		self.delta_c=1.686
-
+		self.kbyh = kbyh
+		self.Tfn = Tfn
 
 	def Wk(self,k,R):
 		"""
@@ -77,12 +78,12 @@ class cosmology(object):
 		delta_c = 1.686
 		if mass_flag ==1:
 			R = (3/(4.*np.pi)*argument/(self.rho_c_h2_msun_mpc3*self.Omega_matter))**(1/3.)
-			PS = cosmology.PS(self,k,z,Tfn)
+			PS = cosmology.PS(self,self.kbyh,z,self.Tfn)
 			Delk = 1/(2.*np.pi**2)*PS*k**3.
 			sigma_square = np.zeros([len(R),1])
 			for i in range(0,len(R)):
-				wk = cosmology.Wk(self,k,R[i])
-				sigma_square[i] = np.trapz(Delk*wk**2/k,k)
+				wk = cosmology.Wk(self,self.kbyh,R[i])
+				sigma_square[i] = np.trapz(Delk*wk**2/self.kbyh,self.kbyh)
 			v = delta_c/np.sqrt(sigma_square)
 		else:
 			v = argument
