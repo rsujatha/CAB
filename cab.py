@@ -29,7 +29,7 @@ class cosmology(object):
 		D=(H/self.H_0)*a**(5/2.)/np.sqrt(self.Omega_matter)*sp.hyp2f1(5/6.,3/2.,11/6.,-a**3*self.Omega_lambda/self.Omega_matter)
 		return D
 			
-	def PS(self,k,z,T):
+	def PS(self,z):
 		"""
 		Input
 		k in h Mpc^1
@@ -40,13 +40,13 @@ class cosmology(object):
 		Pk the power spectrum
 		"""
 		R=8.
-		integrand = 1/(2*np.pi**2)*k**(self.ns+2.)*T**2*cosmology.Wk(self,k,R)**2
-		igrate = np.trapz(integrand,k)
+		integrand = 1/(2*np.pi**2)*self.kbyh**(self.ns+2.)*self.Tfn**2*cosmology.Wk(self,self.kbyh,R)**2
+		igrate = np.trapz(integrand,self.kbyh)
 		SigmaSquare=self.sigma_8**2
 		NormConst = SigmaSquare/igrate
-		return NormConst*k**self.ns*(T)**2*cosmology.GrowthFunction(self,1./(1.+z))**2/cosmology.GrowthFunction(self,1)**2
+		return NormConst*self.kbyh**self.ns*(self.Tfn)**2*cosmology.GrowthFunction(self,1./(1.+z))**2/cosmology.GrowthFunction(self,1)**2
 
-	def PeakHeight(self,mass,k,Tfn,z):
+	def PeakHeight(self,mass,z):
 		"""
 		Inputs:
 		mass in Msunh-1
@@ -55,7 +55,7 @@ class cosmology(object):
 		T the tranfer function
 		"""
 		R = (3/(4*np.pi)*mass/(self.rho_c_h2_msun_mpc3*self.Omega_matter))**(1/3.) ## is in units of Mpch-1
-		PS = cosmology.PS(self,k,z,Tfn)
+		PS = cosmology.PS(self,z)
 		sigma_square = np.zeros([len(R),1])
 		for i in range(0,len(R)):
 			wk = cosmology.Wk(self,self.kbyh,R[i])
