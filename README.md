@@ -4,7 +4,7 @@
 
 ## Description
 
-The Jupyter notebook /demo_jupyternb/demo.ipynb contains few examples of usage of the code and reproduces some of the plots in arXiv:2007.03711.
+The Jupyter notebook /demo_jupyternb/demo.ipynb contains few examples demonstrating usage of the code and reproduces some of the plots in arXiv:2007.03711.
 
 
 Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
