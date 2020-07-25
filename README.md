@@ -4,7 +4,8 @@
 
 ## Description
 
-You can use the [editor on GitHub](https://github.com/rsujatha/CAB/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+The Jupyter notebook /demo_jupyternb/demo.ipynb contains few examples demonstrating usage of the code and reproduces some of the plots in arXiv:2007.03711.
+The launch binder icon above can be used to view an interactive online version of the same.
 
 Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
 sfasf
