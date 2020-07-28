@@ -8,5 +8,5 @@ The Jupyter notebook /demo_jupyternb/demo.ipynb contains few examples demonstrat
 The launch binder icon above can be used to view an interactive online version of the same.
 
 ## Contact
-Sujatha Ramakrishnan
+Sujatha Ramakrishnan \\
 Aseem Paranjape
