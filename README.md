@@ -1,5 +1,6 @@
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/rsujatha/CAB/master?filepath=demo_jupyternb%2Fdemo.ipynb)
 [![arXiv](https://img.shields.io/badge/arXiv-2007.03711-b31b1b.svg?style=plastic)](https://arxiv.org/abs/2007.03711)
+[![arXiv](https://img.shields.io/badge/DOI-%0910.1093%2Fmnras%2Fstz2344-green)](https://arxiv.org/abs/2007.03711)
 
 
 ## Description
