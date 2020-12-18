@@ -3,7 +3,7 @@ import scipy.special as special
 
 
 class cosmology(object):
-	def __init__(self,Omega_matter = 0.276,Omega_lambda=0.724,H_0=70.,ns=0.96,sigma_8 = 0.8,kbyh=None,Tfn=None ):
+	def __init__(self,Omega_matter = 0.276,Omega_lambda=0.724,H_0=70.,ns=0.961,sigma_8 = 0.811,kbyh=None,Tfn=None ):
 		self.Omega_matter=Omega_matter
 		self.rho_c_h2_msun_mpc3 = 2776*1e8    ## critical density in (msun/h)(mpc/h)**3
 		self.ns = ns
