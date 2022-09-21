@@ -14,11 +14,16 @@ class cosmology(object):
 		self.kbyh = kbyh
 		self.Tfn = Tfn
 		### loading fits files #################################################################
-		self.m1 = np.load("../fits/p_m1_alpha.npz")
-		self.s1 = np.load("../fits/p_S1_alpha.npz")
-		self.m2 = np.load("../fits/p_m2_alpha.npz")
-		self.s2 = np.load("../fits/p_S2_alpha.npz")
-		self.ro = np.load("../fits/p_rho.npz")
+		# ~ self.m1 = np.load("../fits/p_m1_alpha.npz")
+		# ~ self.s1 = np.load("../fits/p_S1_alpha.npz")
+		# ~ self.m2 = np.load("../fits/p_m2_alpha.npz")
+		# ~ self.s2 = np.load("../fits/p_S2_alpha.npz")
+		# ~ self.ro = np.load("../fits/p_rho.npz")
+		self.m1 = np.load("/home/rsujatha/MEGA/SubhaSelfCal/CAB/fits/p_m1_alpha.npz")
+		self.s1 = np.load("/home/rsujatha/MEGA/SubhaSelfCal/CAB/fits/p_S1_alpha.npz")
+		self.m2 = np.load("/home/rsujatha/MEGA/SubhaSelfCal/CAB/fits/p_m2_alpha.npz")
+		self.s2 = np.load("/home/rsujatha/MEGA/SubhaSelfCal/CAB/fits/p_S2_alpha.npz")
+		self.ro = np.load("/home/rsujatha/MEGA/SubhaSelfCal/CAB/fits/p_rho.npz")
 
 	def Wk(self,k,R):
 		"""
@@ -69,6 +74,36 @@ class cosmology(object):
 			sigma_square[i] = 1/(2.*np.pi**2)*np.trapz(PS*wk**2*self.kbyh**2,self.kbyh)
 		nu = self.delta_c/np.sqrt(sigma_square)
 		return nu.flatten()
+
+	def T08(self,mass,k,Tfn,z):
+		"""
+		Refer to Tinker (2008): https://arxiv.org/pdf/0803.2706.pdf
+		mass should be in Msun h^-1
+		"""
+		R = (3/(4*np.pi)*mass/(self.rho_c_h2_msun_mpc3*self.Omega_matter))**(1/3.)
+		PS = cosmology.PS(self,k,z,Tfn)
+		Delk = 1/(2*np.pi**2)*PS*k**3
+		sigma_square = np.zeros([len(R),1])		
+		rho_dln_simgainv_by_dm = np.zeros([len(R),1])	
+		
+		for i in range(0,len(R)):
+			wk = cosmology.Wk(self,k,R[i])
+			dWk2_by_dR = cosmology.dWk2_by_dR(self,k,R[i])
+			sigma_square[i] = 1/(2.*np.pi**2)*np.trapz(PS*wk**2*k**2,k)
+			rho_dln_simgainv_by_dm[i] = - 1/(2*sigma_square[i]) * np.trapz(Delk/k*dWk2_by_dR/(4*np.pi*R[i]**2),k)
+			
+		sigma = np.sqrt(sigma_square)
+		delt = 200
+		A = 0.186*(1+z)**(-0.14)
+		a = 1.47*(1+z)**(-0.06)
+		alpha = 10**(-(0.75/(np.log10(delt/75)))**(1.2))
+		b = 2.57*(1+z)**(-alpha)
+		c = 1.19
+		f = A* ((sigma/b)**(-a)+1)*np.exp(-c/sigma**2)
+		dn_by_dlnm = f * rho_dln_simgainv_by_dm
+		return dn_by_dlnm
+
+
 	
 	def T10(self,argument,z=0,mass_flag=1):
 		"""
