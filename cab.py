@@ -1,7 +1,11 @@
 import numpy as np
 import scipy.special as special
+import os
 
 
+absolutepath=  os.path.dirname(os.path.abspath(__file__))
+print (absolutepath)
+      
 class cosmology(object):
 	def __init__(self,Omega_matter = 0.276,Omega_lambda=0.724,H_0=70.,ns=0.961,sigma_8 = 0.811,kbyh=None,Tfn=None ):
 		self.Omega_matter=Omega_matter
@@ -19,11 +23,11 @@ class cosmology(object):
 		# ~ self.m2 = np.load("../fits/p_m2_alpha.npz")
 		# ~ self.s2 = np.load("../fits/p_S2_alpha.npz")
 		# ~ self.ro = np.load("../fits/p_rho.npz")
-		self.m1 = np.load("/home/rsujatha/MEGA/SubhaSelfCal/CAB/fits/p_m1_alpha.npz")
-		self.s1 = np.load("/home/rsujatha/MEGA/SubhaSelfCal/CAB/fits/p_S1_alpha.npz")
-		self.m2 = np.load("/home/rsujatha/MEGA/SubhaSelfCal/CAB/fits/p_m2_alpha.npz")
-		self.s2 = np.load("/home/rsujatha/MEGA/SubhaSelfCal/CAB/fits/p_S2_alpha.npz")
-		self.ro = np.load("/home/rsujatha/MEGA/SubhaSelfCal/CAB/fits/p_rho.npz")
+		self.m1 = np.load(absolutepath+"/fits/p_m1_alpha.npz")
+		self.s1 = np.load(absolutepath+"/fits/p_S1_alpha.npz")
+		self.m2 = np.load(absolutepath+"/fits/p_m2_alpha.npz")
+		self.s2 = np.load(absolutepath+"/fits/p_S2_alpha.npz")
+		self.ro = np.load(absolutepath+"/fits/p_rho.npz")
 
 	def Wk(self,k,R):
 		"""
@@ -81,17 +85,15 @@ class cosmology(object):
 		mass should be in Msun h^-1
 		"""
 		R = (3/(4*np.pi)*mass/(self.rho_c_h2_msun_mpc3*self.Omega_matter))**(1/3.)
-		PS = cosmology.PS(self,k,z,Tfn)
-		Delk = 1/(2*np.pi**2)*PS*k**3
+		PS = cosmology.PS(self,z)
+		Delk = 1/(2*np.pi**2)*PS*self.kbyh**3
 		sigma_square = np.zeros([len(R),1])		
-		rho_dln_simgainv_by_dm = np.zeros([len(R),1])	
-		
+		rho_dln_simgainv_by_dm = np.zeros([len(R),1])			
 		for i in range(0,len(R)):
-			wk = cosmology.Wk(self,k,R[i])
-			dWk2_by_dR = cosmology.dWk2_by_dR(self,k,R[i])
-			sigma_square[i] = 1/(2.*np.pi**2)*np.trapz(PS*wk**2*k**2,k)
-			rho_dln_simgainv_by_dm[i] = - 1/(2*sigma_square[i]) * np.trapz(Delk/k*dWk2_by_dR/(4*np.pi*R[i]**2),k)
-			
+			wk = cosmology.Wk(self,self.kbyh,R[i])
+			dWk2_by_dR = cosmology.dWk2_by_dR(self,self.kbyh,R[i])
+			sigma_square[i] = 1/(2.*np.pi**2)*np.trapz(PS*wk**2*self.kbyh**2,self.kbyh)
+			rho_dln_simgainv_by_dm[i] = - 1/(2*sigma_square[i]) * np.trapz(Delk/self.kbyh*dWk2_by_dR/(4*np.pi*R[i]**2),self.kbyh)			
 		sigma = np.sqrt(sigma_square)
 		delt = 200
 		A = 0.186*(1+z)**(-0.14)
@@ -103,8 +105,10 @@ class cosmology(object):
 		dn_by_dlnm = f * rho_dln_simgainv_by_dm
 		return dn_by_dlnm
 
+	def dWk2_by_dR(self,k,R):
+		return -54/(k**6.*R**7.)*(np.sin(k*R)-(k*R)*np.cos(k*R))**2. + 18/(k**4.*R**5.) * (np.sin(k*R)-(k*R)*np.cos(k*R)) * np.sin(k*R)
 
-	
+
 	def T10(self,argument,z=0,mass_flag=1):
 		"""
 		Input:
