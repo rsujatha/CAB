@@ -284,10 +284,10 @@ class cosmology(object):
 			h4avg = ((fromval**3-3*fromval)*np.exp(-fromval**2/2)-(toval**3-3*toval)*np.exp(-toval**2/2))/np.sqrt(2*np.pi)/_avg
 		v = cosmology.PeakHeight(self,m,z)
 		vpivot = v-2.05
-		mu1 = cosmology.alphafit(self,v,self.m1['name1'])
-		mu2 = cosmology.alphafit(self,v,self.m2['name1'])
-		s1  = cosmology.alphafit(self,v,self.s1['name1'])
-		s2  = cosmology.alphafit(self,v,self.s2['name1'])	
+		mu1 = cosmology.alphafit(self,v,self.m1)
+		mu2 = cosmology.alphafit(self,v,self.m2)
+		s1  = cosmology.alphafit(self,v,self.s1)
+		s2  = cosmology.alphafit(self,v,self.s2)	
 		rhofit = self.ro['name1']
 		rho = (vpivot**3*rhofit[0]+vpivot**2*rhofit[1]+vpivot*rhofit[2]+rhofit[3])
 		b2avg = btwo + (mu2+2*mu1*(bone-1)+8/21*mu1)*h1avg*rho + (mu1**2+s1*(bone-1)+1/2.*s2+4/21.*s1)*h2avg*rho**2 + (mu1*s1)*h3avg*rho**3 + (1/4.*s1**2)*h4avg*rho**4
@@ -305,8 +305,8 @@ class cosmology(object):
 		_avg = (special.erf(toval/np.sqrt(2))-special.erf(fromval/np.sqrt(2)))/2
 		v = cosmology.PeakHeight(self,m,z)
 		vpivot = v-2.05
-		mu1 = cosmology.alphafit(self,v,self.m1['name1'])
-		s1 = cosmology.alphafit(self,v,self.s1['name1'])
+		mu1 = cosmology.alphafit(self,v,self.m1)
+		s1 = cosmology.alphafit(self,v,self.s1)
 		rhofit = self.ro['name1']
 		vpivot = v-2.05
 		rho = (vpivot**3*rhofit[0]+vpivot**2*rhofit[1]+vpivot*rhofit[2]+rhofit[3])
