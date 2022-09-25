@@ -206,9 +206,9 @@ class cosmology(object):
 			_avg = (special.erf(toval/np.sqrt(2))-special.erf(fromval/np.sqrt(2)))/2
 		if mass_flag ==1:
 			v = cosmology.PeakHeight(self,m,z)
-			b1avg = cosmology.T10(self,m,z=z,mass_flag=1) + cosmology.alphafit(self,v,self.m1['name1'])*h1avg/_avg + 1/2.*cosmology.alphafit(self,v,self.s1['name1'])*h2avg/_avg
+			b1avg = cosmology.T10(self,m,z=z,mass_flag=1) + cosmology.alphafit(self,v,self.m1)*h1avg/_avg + 1/2.*cosmology.alphafit(self,v,self.s1)*h2avg/_avg
 		elif mass_flag==0:
-			b1avg = cosmology.T10(self,m,z=z,mass_flag=0) + cosmology.alphafit(self,m,self.m1['name1'])*h1avg/_avg + 1/2.*cosmology.alphafit(self,m,self.s1['name1'])*h2avg/_avg
+			b1avg = cosmology.T10(self,m,z=z,mass_flag=0) + cosmology.alphafit(self,m,self.m1)*h1avg/_avg + 1/2.*cosmology.alphafit(self,m,self.s1)*h2avg/_avg
 		return b1avg
 		
 	def b2avg(self,m,z,fromval,toval=None,mass_flag=1):
@@ -248,18 +248,18 @@ class cosmology(object):
 	
 		if mass_flag==1:
 			v = cosmology.PeakHeight(self,m,z)
-			mu1 = cosmology.alphafit(self,v,self.m1['name1'])
-			mu2 = cosmology.alphafit(self,v,self.m2['name1'])
-			s1  = cosmology.alphafit(self,v,self.s1['name1'])
-			s2  = cosmology.alphafit(self,v,self.s2['name1'])	
+			mu1 = cosmology.alphafit(self,v,self.m1)
+			mu2 = cosmology.alphafit(self,v,self.m2)
+			s1  = cosmology.alphafit(self,v,self.s1)
+			s2  = cosmology.alphafit(self,v,self.s2)	
 			bone = cosmology.T10(self,m,z=z,mass_flag=1)
 			btwo = 0.412 - 2.143 *bone + 0.929 *bone**2 + 0.008*bone**3
 			b2avg = btwo + (mu2+2*mu1*(bone-1)+8/21*mu1)*h1avg + (mu1**2+s1*(bone-1)+1/2.*s2+4/21.*s1)*h2avg + (mu1*s1)*h3avg + (1/4.*s1**2)*h4avg
 		elif mass_flag==0:
-			mu1 = cosmology.alphafit(self,m,self.m1['name1'])
-			mu2 = cosmology.alphafit(self,m,self.m2['name1'])
-			s1  = cosmology.alphafit(self,m,self.s1['name1'])
-			s2  = cosmology.alphafit(self,v,self.s2['name1'])	
+			mu1 = cosmology.alphafit(self,m,self.m1)
+			mu2 = cosmology.alphafit(self,m,self.m2)
+			s1  = cosmology.alphafit(self,m,self.s1)
+			s2  = cosmology.alphafit(self,v,self.s2)	
 			bone = cosmology.T10(self,m,z=z,mass_flag=0)
 			btwo = 0.412 - 2.143 *bone + 0.929 *bone**2 + 0.008*bone**3
 			b2avg = btwo + (mu2+2*mu1*(bone-1)+8/21*mu1)*h1avg + (mu1**2+s1*(bone-1)+1/2.*s2+4/21.*s1)*h2avg + (mu1*s1)*h3avg + (1/4.*s1**2)*h4avg			
