@@ -28,11 +28,12 @@ class cosmology(object):
 		self.m2 = np.load(absolutepath+"/fits/p_m2_alpha.npz")
 		self.s2 = np.load(absolutepath+"/fits/p_S2_alpha.npz")
 		# ~ self.ro = np.load(absolutepath+"/fits/p_rho.npz")
-		self.ro_c200b = np.load(absolutepath+"/fits/pearson_rho_c200b-alpha.npz")
-		self.ro_c_to_a = np.load(absolutepath+"/fits/pearson_rho_c_to_a-alpha.npz")
-		self.ro_vc_to_va = np.load(absolutepath+"/fits/pearson_rho_vc_to_va-alpha.npz")
-		self.ro_beta = np.load(absolutepath+"/fits/pearson_rho_beta-alpha.npz")
-		self.ro_Spin = np.load(absolutepath+"/fits/pearson_rho_Spin-alpha.npz")	
+		self.ro={}
+		self.ro['c200b'] = np.load(absolutepath+"/fits/pearson_rho_c200b-alpha.npz")
+		self.ro['c_to_a'] = np.load(absolutepath+"/fits/pearson_rho_c_to_a-alpha.npz")
+		self.ro['vc_to_va'] = np.load(absolutepath+"/fits/pearson_rho_vc_to_va-alpha.npz")
+		self.ro['beta'] = np.load(absolutepath+"/fits/pearson_rho_beta-alpha.npz")
+		self.ro['Spin'] = np.load(absolutepath+"/fits/pearson_rho_Spin-alpha.npz")	
 	def Wk(self,k,R):
 		"""
 		Fourier Transform of a Spherical Top Hat Filter
@@ -313,19 +314,31 @@ class cosmology(object):
 			v = self.PeakHeight(m,z)
 		mu1 = cosmology.alphafit(self,v,self.m1)
 		s1 = cosmology.alphafit(self,v,self.s1)
-		rhoget = getattr(self,'rho_'+secondaryproperty)
-		rho = rhoget(v)
+		# ~ rhoget = getattr(self,'rho_'+secondaryproperty)
+		rho = self.rhoget(secondaryproperty,v)
 		b1avg = cosmology.T10(self,m,z=z,mass_flag=1) + rho*mu1*h1avg/_avg + 1/2.*rho**2*s1*h2avg/_avg		
 		##################### for generating error bar  ################################################################
 		sampling=100
-		rhosamp = rhoget(v,sample_cov=1,sampling=sampling)
+		rhosamp = self.rhoget(secondaryproperty,v,sample_cov=1,sampling=sampling)
 		mu1samp = self.fit(v,self.m1,sample_cov=1,sampling=sampling)
 		s1samp = self.fit(v,self.s1,sample_cov=1,sampling=sampling)
 		b1_fr_err= rhosamp*mu1samp*h1avg/_avg + 1/2.*rhosamp**2*s1samp*h2avg/_avg
 		err_in_b1 = np.std(b1_fr_err,axis=0)
 		return b1avg,err_in_b1 	
 
-
+	def rhoget(self,secondaryproperty='c200b',v,sample_cov=0,sampling=0):
+		"""
+		v is the peakheight		
+		"""
+		if sample_cov ==0:
+			rhofit = self.ro[secondaryproperty]['name1']
+			rho = np.polyval(rhofit[::-1],np.log(v))
+		elif sample_cov==1:
+			rhofit = np.random.multivariate_normal(self.ro[secondaryproperty]['name1'],self.ro[secondaryproperty]['name2'],sampling)
+			rho= 0	
+			for i in range(len(self.ro[secondaryproperty]['name1'])):
+				rho +=np.log(v.reshape([1,len(v)]))**i*(rhofit[:,i]).reshape([len(rhofit[:,i]),1])
+		return rho
 
 
 
