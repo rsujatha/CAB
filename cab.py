@@ -293,10 +293,20 @@ class cosmology(object):
 		mu2 = cosmology.alphafit(self,v,self.m2)
 		s1  = cosmology.alphafit(self,v,self.s1)
 		s2  = cosmology.alphafit(self,v,self.s2)	
-		rhofit = self.ro['name1']
-		rho = (vpivot**3*rhofit[0]+vpivot**2*rhofit[1]+vpivot*rhofit[2]+rhofit[3])
+		# ~ rhofit = self.ro['name1']
+		# ~ rho = (vpivot**3*rhofit[0]+vpivot**2*rhofit[1]+vpivot*rhofit[2]+rhofit[3])
+		rho = self.rhoget(secondaryproperty,v)
 		b2avg = btwo + (mu2+2*mu1*(bone-1)+8/21*mu1)*h1avg*rho + (mu1**2+s1*(bone-1)+1/2.*s2+4/21.*s1)*h2avg*rho**2 + (mu1*s1)*h3avg*rho**3 + (1/4.*s1**2)*h4avg*rho**4
-		return b2avg
+		##################### for generating error bar  ################################################################
+		sampling=100
+		rhosamp = self.rhoget(secondaryproperty,v,sample_cov=1,sampling=sampling)
+		mu1samp = self.alphafit(v,self.m1,sample_cov=1,sampling=sampling)
+		s1samp = self.alphafit(v,self.s1,sample_cov=1,sampling=sampling)
+		mu2samp = self.alphafit(v,self.m2,sample_cov=1,sampling=sampling)
+		s2samp = self.alphafit(v,self.s2,sample_cov=1,sampling=sampling)		
+		b2_fr_err=  (mu2samp+2*mu1samp*(bone-1)+8/21*mu1samp)*h1avg*rhosamp + (mu1samp**2+s1samp*(bone-1)+1/2.*s2samp+4/21.*s1samp)*h2avg*rhosamp**2 + (mu1samp*s1samp)*h3avg*rhosamp**3 + (1/4.*s1samp**2)*h4avg*rhosamp**4
+		err_in_b2 = np.std(b2_fr_err,axis=0)
+		return b2avg,err_in_b2
 		
 		
 	def b1_c_from_alpha(self,secondaryproperty='c200b',m=None,z=None,fromval=None,toval=None):
