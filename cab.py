@@ -294,7 +294,7 @@ class cosmology(object):
 		return b2avg
 		
 		
-	def b1_c_from_alpha(self,secondaryproperty='c200b',m,z,fromval,toval=None):
+	def b1_c_from_alpha(self,secondaryproperty='c200b',m=None,z=None,fromval=None,toval=None):
 		h1avg = (np.exp(-fromval**2/2)-np.exp(-toval**2/2))/np.sqrt(2*np.pi)
 		if np.exp(-toval**2/2)==0.0:
 			h2avg = (fromval*np.exp(-fromval**2/2))/np.sqrt(2*np.pi)
