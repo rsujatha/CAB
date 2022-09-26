@@ -294,7 +294,7 @@ class cosmology(object):
 		return b2avg
 		
 		
-	def b1_c_from_alpha(self,m,z,fromval,toval=None):
+	def b1_c_from_alpha(self,secondaryproperty='c200b',m,z,fromval,toval=None):
 		h1avg = (np.exp(-fromval**2/2)-np.exp(-toval**2/2))/np.sqrt(2*np.pi)
 		if np.exp(-toval**2/2)==0.0:
 			h2avg = (fromval*np.exp(-fromval**2/2))/np.sqrt(2*np.pi)
@@ -303,15 +303,23 @@ class cosmology(object):
 		else:
 			h2avg = (fromval*np.exp(-fromval**2/2)-toval*np.exp(-toval**2/2))/np.sqrt(2*np.pi)
 		_avg = (special.erf(toval/np.sqrt(2))-special.erf(fromval/np.sqrt(2)))/2
-		v = cosmology.PeakHeight(self,m,z)
-		vpivot = v-2.05
+		if z=='notrequired_because_prev_arg_is_peakheight':
+			v = m
+		else:
+			v = self.PeakHeight(m,z)
 		mu1 = cosmology.alphafit(self,v,self.m1)
 		s1 = cosmology.alphafit(self,v,self.s1)
-		rhofit = self.ro['name1']
-		vpivot = v-2.05
-		rho = (vpivot**3*rhofit[0]+vpivot**2*rhofit[1]+vpivot*rhofit[2]+rhofit[3])
-		b1avg = cosmology.T10(self,m,z=z,mass_flag=1) + rho*mu1*h1avg/_avg + 1/2.*rho**2*s1*h2avg/_avg
-		return b1avg
+		rhoget = getattr(self,'rho_'+secondaryproperty)
+		rho = rhoget(v)
+		b1avg = cosmology.T10(self,m,z=z,mass_flag=1) + rho*mu1*h1avg/_avg + 1/2.*rho**2*s1*h2avg/_avg		
+		##################### for generating error bar  ################################################################
+		sampling=100
+		rhosamp = rhoget(v,sample_cov=1,sampling=sampling)
+		mu1samp = self.fit(v,self.m1,sample_cov=1,sampling=sampling)
+		s1samp = self.fit(v,self.s1,sample_cov=1,sampling=sampling)
+		b1_fr_err= rhosamp*mu1samp*h1avg/_avg + 1/2.*rhosamp**2*s1samp*h2avg/_avg
+		err_in_b1 = np.std(b1_fr_err,axis=0)
+		return b1avg,err_in_b1 	
 
 
 
