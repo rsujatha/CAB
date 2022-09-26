@@ -320,8 +320,8 @@ class cosmology(object):
 		##################### for generating error bar  ################################################################
 		sampling=100
 		rhosamp = self.rhoget(secondaryproperty,v,sample_cov=1,sampling=sampling)
-		mu1samp = self.fit(v,self.m1,sample_cov=1,sampling=sampling)
-		s1samp = self.fit(v,self.s1,sample_cov=1,sampling=sampling)
+		mu1samp = self.alphafit(v,self.m1,sample_cov=1,sampling=sampling)
+		s1samp = self.alphafit(v,self.s1,sample_cov=1,sampling=sampling)
 		b1_fr_err= rhosamp*mu1samp*h1avg/_avg + 1/2.*rhosamp**2*s1samp*h2avg/_avg
 		err_in_b1 = np.std(b1_fr_err,axis=0)
 		return b1avg,err_in_b1 	
