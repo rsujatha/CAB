@@ -326,7 +326,7 @@ class cosmology(object):
 		err_in_b1 = np.std(b1_fr_err,axis=0)
 		return b1avg,err_in_b1 	
 
-	def rhoget(self,secondaryproperty='c200b',v,sample_cov=0,sampling=0):
+	def rhoget(self,secondaryproperty='c200b',v=None,sample_cov=0,sampling=0):
 		"""
 		v is the peakheight		
 		"""
