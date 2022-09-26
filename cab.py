@@ -27,8 +27,12 @@ class cosmology(object):
 		self.s1 = np.load(absolutepath+"/fits/p_S1_alpha.npz")
 		self.m2 = np.load(absolutepath+"/fits/p_m2_alpha.npz")
 		self.s2 = np.load(absolutepath+"/fits/p_S2_alpha.npz")
-		self.ro = np.load(absolutepath+"/fits/p_rho.npz")
-
+		# ~ self.ro = np.load(absolutepath+"/fits/p_rho.npz")
+		self.ro_c200b = np.load(pathmain+"/perseus_to_laptop/haloprop_class_fits/pearson_rho_c200b-alpha.npz")
+		self.ro_c_to_a = np.load(pathmain+"/perseus_to_laptop/haloprop_class_fits/pearson_rho_c_to_a-alpha.npz")
+		self.ro_vc_to_va = np.load(pathmain+"/perseus_to_laptop/haloprop_class_fits/pearson_rho_vc_to_va-alpha.npz")
+		self.ro_beta = np.load(pathmain+"/perseus_to_laptop/haloprop_class_fits/pearson_rho_beta-alpha.npz")
+		self.ro_Spin = np.load(pathmain+"/perseus_to_laptop/haloprop_class_fits/pearson_rho_Spin-alpha.npz")	
 	def Wk(self,k,R):
 		"""
 		Fourier Transform of a Spherical Top Hat Filter
