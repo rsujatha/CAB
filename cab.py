@@ -270,7 +270,7 @@ class cosmology(object):
 			b2avg = btwo + (mu2+2*mu1*(bone-1)+8/21*mu1)*h1avg + (mu1**2+s1*(bone-1)+1/2.*s2+4/21.*s1)*h2avg + (mu1*s1)*h3avg + (1/4.*s1**2)*h4avg			
 		return b2avg
 		
-	def b2_c_from_alpha(self,m,z,fromval,toval=None):
+	def b2_c_from_alpha(self,secondaryproperty,m,z,fromval,toval=None):
 		bone = cosmology.T10(self,m,z=z,mass_flag=1)
 		btwo = 0.412 - 2.143 *bone + 0.929 *bone**2 + 0.008*bone**3
 		_avg = (special.erf(toval/np.sqrt(2))-special.erf(fromval/np.sqrt(2)))/2
