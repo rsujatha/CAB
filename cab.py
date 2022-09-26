@@ -337,7 +337,9 @@ class cosmology(object):
 			rhofit = np.random.multivariate_normal(self.ro[secondaryproperty]['name1'],self.ro[secondaryproperty]['name2'],sampling)
 			rho= 0	
 			for i in range(len(self.ro[secondaryproperty]['name1'])):
-				rho +=np.log(v.reshape([1,len(v)]))**i*(rhofit[:,i]).reshape([len(rhofit[:,i]),1])
+				rho +=np.log(v.reshape([1,len(v)]))**i*(rhofit[:,i]).reshape([len(rhofit[:,i]),1]
+		if secondaryproperty=='beta':
+			rho=-rho
 		return rho
 
 
