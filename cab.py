@@ -310,14 +310,26 @@ class cosmology(object):
 		
 		
 	def b1_c_from_alpha(self,secondaryproperty='c200b',m=None,z=None,fromval=None,toval=None):
-		h1avg = (np.exp(-fromval**2/2)-np.exp(-toval**2/2))/np.sqrt(2*np.pi)
-		if np.exp(-toval**2/2)==0.0:
+		if toval==None:
+			if fromval==None:
+				h1avg = 0
+				h2avg = 0
+			else:
+				h1avg = cosmology.H1(self,fromval)
+				h2avg = cosmology.H2(self,fromval)
+			_avg = 1
+		elif np.exp(-toval**2/2)==0.0:
 			h2avg = (fromval*np.exp(-fromval**2/2))/np.sqrt(2*np.pi)
+			h1avg = (np.exp(-fromval**2/2)-np.exp(-toval**2/2))/np.sqrt(2*np.pi)
+			_avg = (special.erf(toval/np.sqrt(2))-special.erf(fromval/np.sqrt(2)))/2
 		elif np.exp(-fromval**2/2)==0.0:
 			h2avg = (-toval*np.exp(-toval**2/2))/np.sqrt(2*np.pi)
+			h1avg = (np.exp(-fromval**2/2)-np.exp(-toval**2/2))/np.sqrt(2*np.pi)
+			_avg = (special.erf(toval/np.sqrt(2))-special.erf(fromval/np.sqrt(2)))/2
 		else:
 			h2avg = (fromval*np.exp(-fromval**2/2)-toval*np.exp(-toval**2/2))/np.sqrt(2*np.pi)
-		_avg = (special.erf(toval/np.sqrt(2))-special.erf(fromval/np.sqrt(2)))/2
+			h1avg = (np.exp(-fromval**2/2)-np.exp(-toval**2/2))/np.sqrt(2*np.pi)
+			_avg = (special.erf(toval/np.sqrt(2))-special.erf(fromval/np.sqrt(2)))/2
 		if z=='notrequired_because_prev_arg_is_peakheight':
 			v = m
 		else:
